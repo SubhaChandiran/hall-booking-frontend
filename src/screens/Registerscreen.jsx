@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Registerscreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cpassword, setcpassword] = useState("");
+  const [registrationStatus, setRegistrationStatus] = useState(null);
 
-  function register() {
+  async function register() {
     if (password == cpassword) {
       const user = {
         name,
@@ -14,10 +16,23 @@ function Registerscreen() {
         password,
         cpassword,
       };
-      console.log(user);
+
+      try {
+        const result = await axios.post("/api/users/register", user).data;
+        setRegistrationStatus("success");
+
+      } catch (error) {
+        // console.log(error);
+        setRegistrationStatus("failure");
+      }
     } else {
       alert("Passwords not matched");
     }
+    setName("");
+    setEmail("");
+    setPassword("");
+    setcpassword("");
+  
   }
 
   return (
@@ -65,6 +80,22 @@ function Registerscreen() {
             <button className="btn btn-primary mt-3" onClick={register}>
               Register
             </button>
+
+            {/*  */}
+
+            {/* Display success message */}
+            {registrationStatus === "success" && (
+              <div className="alert alert-success mt-3" role="alert">
+                Registration successful! You can now login.
+              </div>
+            )}
+
+            {/* Display failure message */}
+            {registrationStatus === "failure" && (
+              <div className="alert alert-danger mt-3" role="alert">
+                Registration failed. Please try again.
+              </div>
+            )}
           </div>
         </div>
       </div>
